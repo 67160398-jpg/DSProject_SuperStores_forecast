@@ -26,7 +26,7 @@
 - แสดงกราฟพยากรณ์ของยอดการขายในอนาคต (1-2ปี)
 
 ## Deployment
-Streamlit App: (ใส่ลิงก์)
+Streamlit App: (https://dsprojectsuperstoresforecast-95r3hqo3evvpbzoysrzgit.streamlit.app/)
 
 ## Dataset
 - SuperStoreOrders - SuperStoreOrders.csv
