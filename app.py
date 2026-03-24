@@ -6,6 +6,7 @@ from pmdarima import auto_arima
 # -------------------
 # TITLE
 # -------------------
+st.set_page_config(page_title="SuperStore Forecast", layout="wide")
 st.title("📊 SuperStore Sales Forecast")
 
 # -------------------
@@ -22,7 +23,11 @@ def load_data():
     ts_data = df['sales'].resample('M').sum()
     return ts_data
 
-ts_data = load_data()
+try:
+    ts_data = load_data()
+except:
+    st.error("❌ Cannot load data file")
+    st.stop()
 
 # -------------------
 # SHOW DATA
@@ -31,19 +36,35 @@ st.subheader("📈 Historical Sales")
 st.line_chart(ts_data)
 
 # -------------------
-# MODEL
+# TRAIN MODEL (CACHE)
 # -------------------
-st.subheader("🤖 Training Auto ARIMA Model...")
-model = auto_arima(ts_data, seasonal=False, stepwise=True)
+@st.cache_resource
+def train_model(ts_data):
+    model = auto_arima(ts_data,
+                       seasonal=True,
+                       m=12,
+                       stepwise=True,
+                       trace=False)
+    return model
+
+with st.spinner("🤖 Training Auto ARIMA Model..."):
+    model = train_model(ts_data)
+
+# -------------------
+# FORECAST CONTROL
+# -------------------
+st.subheader("⚙️ Forecast Settings")
+n_periods = st.slider("Select forecast months", 1, 24, 12)
 
 # -------------------
 # FORECAST
 # -------------------
-n_periods = st.slider("Select forecast months", 1, 24, 12)
+forecast, conf_int = model.predict(n_periods=n_periods, return_conf_int=True)
 
-forecast = model.predict(n_periods=n_periods)
+future_index = pd.date_range(start=ts_data.index[-1],
+                             periods=n_periods + 1,
+                             freq='M')[1:]
 
-future_index = pd.date_range(start=ts_data.index[-1], periods=n_periods+1, freq='M')[1:]
 forecast_series = pd.Series(forecast, index=future_index)
 
 # -------------------
@@ -51,9 +72,32 @@ forecast_series = pd.Series(forecast, index=future_index)
 # -------------------
 st.subheader("🔮 Forecast Result")
 
-fig, ax = plt.subplots(figsize=(10,5))
+fig, ax = plt.subplots(figsize=(12,6))
+
 ax.plot(ts_data, label='Historical')
 ax.plot(forecast_series, label='Forecast')
+
+# Confidence Interval
+ax.fill_between(future_index,
+                conf_int[:, 0],
+                conf_int[:, 1],
+                alpha=0.2)
+
+ax.set_title("Sales Forecast (Next Months)")
 ax.legend()
+ax.grid()
 
 st.pyplot(fig)
+
+# -------------------
+# SHOW FORECAST DATA
+# -------------------
+st.subheader("📊 Forecast Data")
+st.dataframe(forecast_series.to_frame(name="Forecast Sales"))
+
+# -------------------
+# MODEL INFO
+# -------------------
+st.subheader("🧠 Model Info")
+st.write("ARIMA Order:", model.order)
+st.write("Seasonal Order:", model.seasonal_order)
