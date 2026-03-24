@@ -72,8 +72,6 @@ ts_data = df['sales'].resample('M').sum()
 print(ts_data.dtype)
 len(ts_data)
 
-from statsmodels.tsa.seasonal import seasonal_decompose
-
 decomposition = seasonal_decompose(ts_data, model='multiplicative', period=12)
 
 fig, axes = plt.subplots(4, 1, figsize=(15, 10))
@@ -92,8 +90,6 @@ axes[3].set_title('Residual')
 
 plt.tight_layout()
 plt.show()
-
-from statsmodels.tsa.stattools import adfuller
 
 def test_stationarity(timeseries, title="ข้อมูล"):
     """
@@ -151,8 +147,6 @@ plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 
-from statsmodels.tsa.arima.model import ARIMA
-
 model = ARIMA(train_data, order=(1,1,1))
 model_fit = model.fit()
 
@@ -165,7 +159,6 @@ plt.plot(forecast, label='Forecast')
 plt.legend()
 plt.show()
 
-from pmdarima import auto_arima
 forecast_auto = auto_model.predict(n_periods=len(test_data))
 
 auto_model = auto_arima(train_data,
@@ -186,8 +179,6 @@ plt.legend()
 plt.grid()
 
 plt.show()
-
-from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 # ARIMA เดิม
 mae1 = mean_absolute_error(test_data, forecast)
