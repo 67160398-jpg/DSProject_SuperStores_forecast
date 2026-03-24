@@ -166,6 +166,7 @@ plt.legend()
 plt.show()
 
 from pmdarima import auto_arima
+forecast_auto = auto_model.predict(n_periods=len(test_data))
 
 auto_model = auto_arima(train_data,
                         seasonal=True,
@@ -185,8 +186,6 @@ plt.legend()
 plt.grid()
 
 plt.show()
-
-forecast_auto = auto_model.predict(n_periods=len(test_data))
 
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
