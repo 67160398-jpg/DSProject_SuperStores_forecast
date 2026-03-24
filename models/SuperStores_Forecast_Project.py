@@ -207,10 +207,11 @@ plt.show()
 
 """# **ทำการพยากรณ์จริงในระยะ1ปี**"""
 
-auto_model = auto_arima(ts_data,
-                        seasonal=True,
-                        m=12,
-                        trace=True)
+model = auto_arima(ts_data,
+                       seasonal=True,
+                       m=12,
+                       stepwise=True,
+                       trace=False)
 
 plt.figure(figsize=(12,6))
 
