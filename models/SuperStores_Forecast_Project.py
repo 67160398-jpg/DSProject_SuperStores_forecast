@@ -159,14 +159,14 @@ plt.plot(forecast, label='Forecast')
 plt.legend()
 plt.show()
 
-forecast_auto = auto_model.predict(n_periods=len(test_data))
-
 auto_model = auto_arima(train_data,
                         seasonal=True,
                         m=12,
                         trace=True)
 
 plt.figure(figsize=(12,6))
+
+forecast_auto = auto_model.predict(n_periods=len(test_data))
 
 plt.plot(train_data, label='Train', color='blue')
 plt.plot(test_data, label='Actual', color='black')
@@ -215,7 +215,7 @@ model = auto_arima(ts_data,
 
 plt.figure(figsize=(12,6))
 
-future_forecast = auto_model.predict(n_periods=12)
+future_forecast = model.predict(n_periods=12)
 
 future_index = pd.date_range(start=ts_data.index[-1], periods=13, freq='M')[1:]
 future_forecast = pd.Series(future_forecast, index=future_index)
@@ -230,4 +230,4 @@ plt.legend()
 plt.grid()
 plt.show()
 
-print(auto_model.order)
+print(model.order)
